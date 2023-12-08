@@ -6,6 +6,7 @@ const Login = () => {
   const [isTokenVerified, setIsTokenVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
+ 
 
   const handleTokenSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +16,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:8080/users/verify', { token });
       if (response.status === 200) {
         setIsTokenVerified(true);
-        e.target.reset(); // Clear input fields after successful verification
+        e.target.reset(); 
       }
     } catch (error) {
       console.error('Token verification failed:', error.response.message);
@@ -33,8 +34,18 @@ const Login = () => {
       const response = await axios.post('http://localhost:8080/users/login', { username, password });
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
-        // Handle successful login, redirect, etc.
+        setErrorMessage('Login successfully');
+        setShowErrorModal(true);
+
+        
+        
+        setTimeout(() => {
+          setShowErrorModal(false); 
+          window.location.reload();
+          window.location.href = "/";
+        }, 1000); 
       }
+      
     } catch (error) {
       console.error('Login failed:', error);
       setErrorMessage('Login failed');
@@ -48,6 +59,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
+        <h1>MVL STORE</h1>
       <div className="wrapper">
         {isTokenVerified ? (
          

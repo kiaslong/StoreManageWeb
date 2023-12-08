@@ -1,12 +1,19 @@
-import React from 'react';
+import React,{useContext} from 'react'
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import InsightsIcon from '@mui/icons-material/Insights';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '../assets/logo.png';
+import { AuthContext } from '../context/AuthContext';
 
 const Sidebar = ({ handleSelectedComponent }) => {
+  const { currentUser } = useContext(AuthContext);
+  function handleLogout(){
+    localStorage.removeItem('token') 
+    window.location.reload();
+   }
+
   return (
     <aside>
       <div className="toggle">
@@ -32,11 +39,13 @@ const Sidebar = ({ handleSelectedComponent }) => {
           <PersonOutlineIcon />
           <h3>Customers Management</h3>
         </a>
-        <a onClick={() => handleSelectedComponent('StaffManagement')}>
-          <PersonOutlineIcon />
-          <h3>Staff Management</h3>
-        </a>
-        <a>
+        {currentUser.user.username === 'admin' && (
+          <a onClick={() => handleSelectedComponent('StaffManagement')}>
+            <PersonOutlineIcon />
+            <h3>Staff Management</h3>
+          </a>
+        )}
+        <a onClick={()=> handleLogout()}>
           <LogoutIcon />
           <h3>Logout</h3>
         </a>

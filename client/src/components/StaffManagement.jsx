@@ -1,5 +1,6 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios'
+import defaultavatar from '../assets/default_logo_user.png';
 
 
 const StaffComponent = () => {
@@ -15,18 +16,75 @@ const StaffComponent = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
+  
     fetchStaffList();
+
+   
+    const intervalId = setInterval(() => {
+      fetchStaffList();
+    }, 15000);
+
+    return () => clearInterval(intervalId);
+    
   }, []);
+
+
+
+  const handleToggleLock = async (index) => {
+    try {
+      const staffToToggle = staffList[index];
+      const response = await axios.put(`http://localhost:8080/users/toggle-lock/${staffToToggle.id}`);
+  
+      if (response.status === 200) {
+
+        setErrorMessage(response.data.message);
+        setShowErrorModal(true)
+
+        setTimeout(() => {
+          setShowErrorModal(false);
+        }, 1200);
+
+        fetchStaffList(); 
+
+       
+      }
+    } catch (error) {
+      console.error('Error toggling lock:', error);
+    }
+  };
+  
+  const handleResendEmail = async (index) => {
+    try {
+      const staffToResendEmail = staffList[index];
+      const response = await axios.post(`http://localhost:8080/users/resend-email/${staffToResendEmail.id}`);
+  
+      if (response.status === 200) {
+        setErrorMessage(response.data.message);
+        setShowErrorModal(true)
+
+        setTimeout(() => {
+          setShowErrorModal(false);
+        }, 1500);
+
+      }
+    } catch (error) {
+      console.error('Error resending email:', error);
+    }
+  };
+  
+
 
 
   const fetchStaffList = async () => {
     try {
       const response = await axios.get('http://localhost:8080/users/');
-      console.log(response.data);
       const formattedStaffList = response.data.users.map(staff => ({
         name: staff.fullname,
         email: staff.email,
-        id: staff._id 
+        id: staff._id, 
+        isLock: staff.isLock,
+        passwordChangeRequired: staff.passwordChangeRequired,
+        profilePhotoURL: staff.profilePhotoURL
       }));
       setStaffList(formattedStaffList);
     } catch (error) {
@@ -50,8 +108,19 @@ const StaffComponent = () => {
       if (editIndex !== -1) {
         const response = await axios.put(`http://localhost:8080/users/${newStaff.id}`, newStaff);
         if (response.status === 200) {
-          console.log('Staff updated successfully:', response.data);
+          setErrorMessage(`Staff updated successfully`);
+          setShowErrorModal(true)
           fetchStaffList();
+          setNewStaff({
+            name: '',
+            email: '',
+          });
+          setEditIndex(-1);
+
+          setTimeout(() => {
+            setShowErrorModal(false);
+          }, 1500);
+
         }
       } else {
         const response = await axios.post('http://localhost:8080/users/register', {
@@ -59,12 +128,18 @@ const StaffComponent = () => {
         });
 
         if (response.status === 201) {
-          console.log('New staff added successfully:', response.data);
+          setErrorMessage(`New staff added successfully`);
+          setShowErrorModal(true)
           setNewStaff({
             name: '',
             email: '',
           });
-          fetchStaffList(); // Fetch updated staff list after addition
+          fetchStaffList(); 
+          setTimeout(() => {
+            setShowErrorModal(false);
+          }, 1500);
+
+          
         }
       }
     } catch (error) {
@@ -91,10 +166,19 @@ const StaffComponent = () => {
       const response = await axios.delete(`http://localhost:8080/users/${staffToDelete.id}`);
 
       if (response.status === 200) {
+        setErrorMessage(`Staff deleted successfully`);
+        setShowErrorModal(true)
         const updatedList = staffList.filter((staff, i) => i !== deleteIndex);
         setStaffList(updatedList);
         setDeleteConfirmation(false);
         setDeleteIndex(-1);
+
+
+        setTimeout(() => {
+          setShowErrorModal(false);
+        }, 1500);
+        
+
       }
     } catch (error) {
       console.error('Error deleting staff:', error);
@@ -103,10 +187,10 @@ const StaffComponent = () => {
       
 
   const handleEditStaff = (index) => {
-    // Set the editIndex to the index of the staff being edited
+  
     setEditIndex(index);
 
-    // Set the newStaff state to the staff details being edited
+   
     setNewStaff(staffList[index]);
   };
 
@@ -145,34 +229,65 @@ const StaffComponent = () => {
       </form>
 
       <div className="staff-list">
-        <h2>Staff List</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staffList.map((staff, index) => (
-              <tr key={index}>
-                <td>{staff.name}</td>
-                <td>{staff.email}</td>
-                <td>
-                  <button className="edit-button" onClick={() => handleEditStaff(index)}>
-                    Edit
-                  </button>
-                </td>
-                <td>
-                  <button className="delete-button" onClick={() => handleDeleteConfirmation(index)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+  <h2>Staff List</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>User Avatar</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Active</th>
+        <th>Locked</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {staffList.map((staff, index) => (
+        <tr key={index}>
+          <td>
+            <img
+              src={staff.profilePhotoURL !=='' && staff.profilePhotoURL !==null ? `http://localhost:8080/${staff.profilePhotoURL}` : defaultavatar}
+              alt=""
+            />
+          </td>
+          <td>{staff.name}</td>
+          <td>{staff.email}</td>
+          <td>
+            {!staff.passwordChangeRequired ? (
+              <span style={{ color: 'green' }}>Active</span>
+            ) : (
+              <span style={{ color: 'red' }}>Inactive</span>
+            )}
+          </td>
+          <td>
+            {staff.isLock ? (
+              <span style={{ color: 'red' }}>Locked</span>
+            ) : (
+              <span style={{ color: 'green' }}>Not Locked</span>
+            )}
+          </td>
+          <td>
+            <button className="edit-button" onClick={() => handleEditStaff(index)}>
+              Edit
+            </button>
+            <button className="delete-button" onClick={() => handleDeleteConfirmation(index)}>
+              Delete
+            </button>
+            <button className="toggle-lock-button" onClick={() => handleToggleLock(index)}>
+              {staff.isLock ? 'Unlock' : 'Lock'}
+            </button>
+            <button className="resend-email-button" onClick={() => handleResendEmail(index)}>
+              Resend
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+
     </div>
 
     {showErrorModal && (

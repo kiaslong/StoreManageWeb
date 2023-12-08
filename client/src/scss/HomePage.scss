@@ -33,11 +33,20 @@ button {
   border: 0;
 }
 
+
 body {
   min-height: 100vh;
   font-weight: 400;
   font-size: 16px;
   line-height: 1;
+  width: 100vw;
+  height: 100vh;
+  font-family: "Poppins", "sans-serif";
+  font-size: 0.88rem;
+  user-select: none;
+  overflow-x: hidden;
+  color: var(--color-dark);
+  
 }
 
 .container {
@@ -83,16 +92,6 @@ html {
   font-size: 14px;
 }
 
-body {
-  width: 100vw;
-  height: 100vh;
-  font-family: "Poppins", "sans-serif";
-  font-size: 0.88rem;
-  user-select: none;
-  overflow-x: hidden;
-  color: var(--color-dark);
-  background-color: var(--color-background);
-}
 
 a {
   color: var(--color-dark);
@@ -152,7 +151,28 @@ b {
 }
 
 
+//diaglog 
 
+
+.dialog.success-dialog {
+  background-color: #dff0d8; /* Bootstrap success background color */
+  color: #3c763d; /* Bootstrap success text color */
+  border: 1px solid #d6e9c6; /* Bootstrap success border color */
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+/* Styles for Error Dialog */
+.dialog.error-dialog {
+  background-color: #f2dede; /* Bootstrap error background color */
+  color: #a94442; /* Bootstrap error text color */
+  border: 1px solid #ebccd1; /* Bootstrap error border color */
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+//
 
 /* CSS for error modal */
 .error-modal {
@@ -293,6 +313,23 @@ main {
   width: calc(100%); /* Adjust this width based on your sidebar's width */
   float: left;
 }
+
+main .change-password-dialog{
+  width: 35%;
+  height: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+main .change-password-dialog input[type='password'] {
+  width: 70%;
+  padding: 8px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+ }
 
 main .analyse {
   display: grid;
@@ -560,49 +597,6 @@ th {
   color: #000;
 }
 
-.right-section {
-    position: sticky;
-    margin-top: 1.4rem;
-}
-
-.right-section .nav {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-.right-section .nav .profile {
-  display: flex;
-  gap: 1rem;
-  text-align: right;
-}
-
-.right-section .nav .profile p, .right-section .nav .profile b {
-  font-weight: 700;
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
-}
-
-.right-section .nav .profile .profile-photo {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-
-
-.right-section .nav .profile .info small {
-  color: #000;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-
-
-.right-section .nav .profile .info b {
-  color: beige;
-}
 
 
 
@@ -775,33 +769,61 @@ body {
 }
 
 .right-section {
-  margin-right: 10px;
-}
-
-.right-section .add-product {
-  margin-top: 1.4rem;
-}
-
-.add-product {
-  margin-right: 10px;
-}
-
-.add-product .header {
   display: flex;
-  align-items: center;
+  flex-direction: column; /* Align items in a vertical column */
+  align-items: flex-end; /* Align items to the end of the container */
+  margin-top: 1.4rem;
+  margin-right: 10px;
+}
+
+.right-section .nav {
+  display: flex;
+  flex-direction: column; /* Arrange items in a vertical column */
+  gap: 1rem;
+}
+
+.right-section .nav .profile {
+  display: flex;
+  gap: 1rem;
+  text-align: right;
+  align-items: center; /* Align items vertically */
+}
+
+.right-section .nav .profile p{
+  font-weight: 700;
+  color: black;
+  font-size: 1.0rem;
   margin-bottom: 0.5rem;
 }
 
-.add-product .header span {
-  padding: 2px 5px;
-  box-shadow: var(--box-shadow);
-  color: #000;
+
+.right-section .nav .profile b {
+  font-weight: 700;
+  color: white;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
 }
 
-.add-product .header h2 {
+.right-section .nav .profile .profile-photo {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.add-product  {
+  margin-top: 1rem; /* Adjust the top margin as needed */
+  margin-right: 10px;
+}
+
+.add-product .header{
   font-weight: 500;
   color: #000;
+  font-size: 1rem;
+  margin-left: 23%;
 }
+
+
 
 form {
   height: 500px;
@@ -1009,80 +1031,93 @@ input::-webkit-input-placeholder {
     color: white;
     transition: all 0.5s ease;
   }
-    
-    .staff-list {
-        margin-top: 1.3rem;
-        max-height: 550px; 
-        overflow-y: auto;
-    }
-    
-    .staff-list h2 {
-        margin-bottom: 0.8rem;
-        color: #000;
-    }
-    
-    .staff-list table {
-        width: 100%;
-        padding: var(--card-padding);
-        text-align: center;
-        box-shadow: var(--box-shadow);
-        border-radius: var(--card-border-radius);
-        transition: all 0.3s ease;
-        border: 1px solid #000;
-    }
-    
-    .staff-list table:hover {
-        box-shadow: none;
-    }
-    
-    table tbody td {
-        height: 2.8rem;
-        border-bottom: 1px solid var(--color-light);
-        color: #000;
-        font-weight: 500;
-    }
-    
-    table tbody tr:last-child {
-        border: none;
-    }
-    
-    table tbody tr:hover {
-        transition: all 0.3s ease;
-        transform: translate(0px, -10px);
-        cursor: pointer;
-    }
-    
-    table tbody tr:hover td {
-        color: white;
-    }
-    
-    .staff-list a {
-        text-align: center;
-        display: block;
-        margin: 1rem auto;
-        color: #000;
-    }
-    
-    .staff-list a:hover {
-        color: var(--color-primary);
-        transition: all 0.4s ease;
-    }
-    
-    th {
-        font-weight: 700;
-        font-size: 0.87rem;
-        color: #000;
-    }
+  .staff-list {
+    margin-top: 1.3rem;
+    max-height: 550px; 
+    overflow-y: auto;
+}
 
-    /* Add this CSS to your stylesheet */
-.staff-list button {
-    padding: 8px 10px;
+.staff-list h2 {
+    margin-bottom: 0.8rem;
+    color: #000;
+}
+
+
+
+.staff-list table {
+    width: 100%;
+    padding: var(--card-padding);
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--card-border-radius);
+    transition: all 0.3s ease;
+    border: 1px solid #000;
+}
+
+.staff-list table:hover {
+    box-shadow: none;
+}
+
+table tbody td {
+    padding: 12px; /* Adjust the padding values as needed */
+    height: 3.0rem;
+    border-bottom: 1px solid var(--color-light);
+    color: #000;
+    font-weight: 500;
+   
+}
+
+table tbody tr:last-child {
     border: none;
-    border-radius: 5px;
+}
+
+table tbody tr:hover {
+    transition: all 0.3s ease;
+    transform: translate(0px, -10px);
     cursor: pointer;
-    font-weight: bold;
-  }
-  
+}
+
+table tbody tr:hover td {
+    color: white;
+}
+
+.staff-list a {
+    text-align: center;
+    display: block;
+    margin: 1rem auto;
+    color: #000;
+}
+
+.staff-list a:hover {
+    color: var(--color-primary);
+    transition: all 0.4s ease;
+}
+
+th {
+    font-weight: 700;
+    font-size: 0.87rem;
+    color: #000;
+}
+
+/* Add this CSS to your stylesheet */
+/* Add this CSS to your stylesheet */
+.staff-list button {
+  padding: 8px 10px;
+  margin-right: 4px; /* Adjust the margin to separate buttons */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+/* Adjust the padding for the image */
+.staff-list img {
+    width: 60px;
+    height: 55px;
+    border-radius: 50%;
+    margin-left: 70px;
+    padding-left: 1px; /* Adjust the padding values as needed */
+}
+
 
   
   .delete-button {
@@ -1130,4 +1165,181 @@ input::-webkit-input-placeholder {
   color: white;
 }
 
+
+// change password dialog 
+
+.change-password-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  max-width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.change-password-dialog h1{
+  margin-bottom: 10px;
+}
+
+.change-password-dialog form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+ }
+ 
+ .change-password-dialog label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #000;
+ }
+ 
+ .change-password-dialog input[type='password'] {
+  width: 60%;
+  padding: 8px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+ }
+ 
+ .change-password-dialog button[type='submit'] {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 3px;
+  background-color: #11c598;
+  color: white;
+  cursor: pointer;
+ }
+ .change-password-dialog button[type='submit']:hover {
+  background-color: #024e40;
+ }
+
+ .change-password-dialog .btn {
+  background-color: #972d2d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+  
+}
+
+.change-password-dialog .btn:hover {
+  background-color: #ce001b;
+}
+
+//edit profile 
+
+
+.edit-profile-container {
+  margin-top: 10%;
+  margin-left: 35%;
+  text-align: center;
+  width: 50%;
+  height: fit-content;
+  padding: 20px;
+  border: 1px solid #0c0a0a;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-profile-container h2 {
+  color: #000;
+  margin-left: 20px;
+}
+
+.profile-image-section {
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  margin-left: 29%;
+  width: 45%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.default-profile-image {
+  padding: 10px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.default-profile-image::before {
+  content: 'Select an image';
+}
+
+.default-profile-image:hover::before {
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.input-section {
+  margin-bottom: 15px;
+}
+
+.label-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #000000;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #0a0707;
+  border-radius: 4px;
+  outline: none;
+}
+
+input[type="file"] {
+  color: transparent;
+  
+}
+
+.button-section {
+  display: flex;
+  justify-content: center;
+}
+
+.edit-profile-button {
+  background-color: rgb(7, 143, 86);
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-profile-button:hover {
+  background-color: #00b345;
+}
 

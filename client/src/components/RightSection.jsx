@@ -1,18 +1,29 @@
-import React from 'react'
+import React,{useContext} from 'react'
+import { AuthContext } from '../context/AuthContext';
+import defaultAvatar from '../assets/default_logo_user.png';
 
-const RightSection = ({selecedContext}) => {
+const RightSection = ({selecedContext,handleSelectedComponent}) => {
+  const { currentUser } = useContext(AuthContext);
   return (
     (selecedContext && selecedContext === 'Products' ? (
       <div class="right-section">
       <div class="nav">
         <div class="profile">
-          <div class="info">
-            <p>Hi, <b>Admin</b></p>
-          </div>
+            <p>Hi, <b>{currentUser?.user?.fullname || ''}</b></p>
           <div class="profile-photo">
-            <img src="assets/user1.jpg" alt="" srcset=""/>
+            <img src={currentUser.user.profilePhotoURL !=='' ? `http://localhost:8080/${currentUser.user.profilePhotoURL}` : defaultAvatar} alt="" srcset=""/>
           </div>
         </div>
+        <aside class="settings">
+  <div class="sidebar">
+    <a onClick={() => handleSelectedComponent('ChangePassword')} >
+      Change Password
+    </a>
+    <a onClick={() => handleSelectedComponent('EditProfile')} >
+      Edit Profile
+    </a>
+  </div>
+</aside>
         <div class="add-product">
           <div class="header">
             <h2>Add New Product</h2>
@@ -40,26 +51,25 @@ const RightSection = ({selecedContext}) => {
           </form>
         </div>
       </div>
+      
     </div>  
     ) : (  <div className="right-section">
     <div className="nav">
       <div className="profile">
-        <div className="info">
           <p>
-            Hi, <b>Admin</b>
+            Hi, <b>{currentUser?.user?.fullname || ''}</b>
           </p>
-        </div>
         <div className="profile-photo">
-          <img src="assets/user1.jpg" alt="" />
+        <img src={currentUser.user.profilePhotoURL !=='' ? `http://localhost:8080/${currentUser.user.profilePhotoURL}` : defaultAvatar} alt="" srcset=""/>
         </div>
       </div>
     </div>
     <aside class="settings">
   <div class="sidebar">
-    <a >
+    <a onClick={() => handleSelectedComponent('ChangePassword')} >
       Change Password
     </a>
-    <a >
+    <a onClick={() => handleSelectedComponent('EditProfile')} >
       Edit Profile
     </a>
   </div>

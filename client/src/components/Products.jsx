@@ -64,7 +64,14 @@ const Products = () => {
           <h2>Products List</h2>
           <table>
             <thead>
-              {/* ... table headers ... */}
+            <tr>
+      <th>Barcode</th>
+      <th>ProductName</th>
+      <th>Import Price</th>
+      <th>Retail Price</th>
+      <th>Category</th>
+      <th>Creation Date</th>
+    </tr>
             </thead>
             <tbody>
               {filteredProducts.map((product, index) => (

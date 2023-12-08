@@ -28,6 +28,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null, 
   },
+  passwordChangeRequired: {
+    type: Boolean,
+    default: true,
+  },
+  profilePhotoURL:{
+    type: String,
+    default: ''
+  },
+  isLock:{
+    type: Boolean,
+    default: false,
+  }
+  
 });
 
 const User = mongoose.model('User', userSchema);
