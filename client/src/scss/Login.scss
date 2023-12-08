@@ -9,16 +9,21 @@
 
 .login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url("../assets/phonestore.png");
     background-size: cover;
     background-position: center;
 }
+.login-container h1{
+    font-size: 50px !important;
+    text-align: center;
+    color: rgb(6, 80, 49);
+}
 
 .wrapper{
-    width: 420px !important;
+    width:490px !important;
     background: transparent;
     color: #fff;
     padding: 25px 30px;
@@ -31,8 +36,8 @@
 
 .wrapper h1 {
     font-size: 36px !important;
-    text-align: center
-
+    text-align: centerl;
+    color: rgb(253, 255, 254);
 }
 .wrapper .input-box{
     position: relative;
