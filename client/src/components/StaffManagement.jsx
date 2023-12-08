@@ -267,18 +267,20 @@ const StaffComponent = () => {
             )}
           </td>
           <td>
+          <button className="delete-button" onClick={() => handleDeleteConfirmation(index)}>
+              Delete
+            </button>
             <button className="edit-button" onClick={() => handleEditStaff(index)}>
               Edit
-            </button>
-            <button className="delete-button" onClick={() => handleDeleteConfirmation(index)}>
-              Delete
             </button>
             <button className="toggle-lock-button" onClick={() => handleToggleLock(index)}>
               {staff.isLock ? 'Unlock' : 'Lock'}
             </button>
-            <button className="resend-email-button" onClick={() => handleResendEmail(index)}>
-              Resend
-            </button>
+            {staff.passwordChangeRequired && (
+    <button className="resend-email-button" onClick={() => handleResendEmail(index)}>
+      Resend
+    </button>
+  )}
           </td>
         </tr>
       ))}

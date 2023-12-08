@@ -154,13 +154,22 @@ b {
 //diaglog 
 
 
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Adjust the z-index to ensure it appears above other content */
+}
+
+/* Styles for Success Dialog */
 .dialog.success-dialog {
   background-color: #dff0d8; /* Bootstrap success background color */
   color: #3c763d; /* Bootstrap success text color */
   border: 1px solid #d6e9c6; /* Bootstrap success border color */
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 4px;
+  padding: 20px; /* Larger padding */
+  border-radius: 8px; /* Larger border-radius */
+  font-size: 16px; /* Larger font-size */
 }
 
 /* Styles for Error Dialog */
@@ -168,11 +177,11 @@ b {
   background-color: #f2dede; /* Bootstrap error background color */
   color: #a94442; /* Bootstrap error text color */
   border: 1px solid #ebccd1; /* Bootstrap error border color */
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 4px;
+  padding: 20px; /* Larger padding */
+  border-radius: 8px; /* Larger border-radius */
+  font-size: 16px; /* Larger font-size */
 }
-//
+
 
 /* CSS for error modal */
 .error-modal {
@@ -331,85 +340,7 @@ main .change-password-dialog input[type='password'] {
   margin-bottom: 10px;
  }
 
-main .analyse {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
 
-main .analyse > div {
-  padding: 1.5rem;
-  border-radius: var(--card-border-radius);
-  margin-top: 1rem;
-  box-shadow: var(--box-shadow);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid #000;
-  color: black;
-}
-
-main .analyse > div:hover {
-  box-shadow: none;
-}
-
-main .analyse > div .status {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-main .analyse h3 {
-  margin-left: 0.3rem;
-  font-size: 1rem;
-}
-
-main .analyse .progresss {
-  position: relative;
-  width: 94px;
-  height: 94px;
-  border-radius: 50%;
-}
-
-main .analyse svg {
-  width: 7rem;
-  height: 7rem;
-}
-
-main .analyse svg circle {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: round;
-  transform: translate(5px, 5px);
-}
-
-main .analyse .progresss .percentage {
-  position: absolute;
-  top: -3px;
-  left: -1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-
-main .analyse .sales svg circle {
-  stroke: beige;
-  stroke-dashoffset: -30;
-  stroke-dasharray: 170;
-}
-
-main .analyse .products svg circle {
-  stroke: beige;
-  stroke-dashoffset: -30;
-  stroke-dasharray: 170;
-}
-
-main .analyse .visits svg circle {
-  stroke: beige;
-  stroke-dashoffset: -30;
-  stroke-dasharray: 120;
-}
 
 p {
   font-size: 1rem;
@@ -454,26 +385,6 @@ main .breadcrumb-list {
   position: relative;
 }
 
-.analyse .sales:hover {
-  background: linear-gradient(to left, #8fa991, #34736c);
-  transition: all 0.3s ease;
-  transform: translate(0px, -15px);
-  color: white;
-}
-
-.analyse .visits:hover {
-  background: linear-gradient(to left, #8fa991, #34736c);
-  transition: all 0.3s ease;
-  transform: translate(0px, -15px);
-  color: white;
-}
-
-.analyse .products:hover {
-  background: linear-gradient(to left, #8fa991, #34736c);
-  transition: all 0.3s ease;
-  transform: translate(0px, -15px);
-  color: white;
-}
 
 main .new-users {
   margin-top: 1.3rem;
@@ -1343,3 +1254,109 @@ input[type="file"] {
   background-color: #00b345;
 }
 
+
+
+
+
+//analyse 
+
+main .analyse {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+main .analyse > div {
+  padding: 1.5rem;
+  border-radius: var(--card-border-radius);
+  margin-top: 1rem;
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #000;
+  color: black;
+}
+
+main .analyse > div:hover {
+  box-shadow: none;
+}
+
+main .analyse > div .status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+main .analyse h3 {
+  margin-left: 0.3rem;
+  font-size: 1rem;
+}
+
+main .analyse .progresss {
+  position: relative;
+  width: 94px;
+  height: 94px;
+  border-radius: 50%;
+}
+
+main .analyse svg {
+  width: 7rem;
+  height: 7rem;
+}
+
+main .analyse svg circle {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: translate(5px, 5px);
+}
+
+main .analyse .progresss .percentage {
+  position: absolute;
+  top: -3px;
+  left: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+main .analyse .sales svg circle {
+  stroke: beige;
+  stroke-dashoffset: -30;
+  stroke-dasharray: 170;
+}
+
+main .analyse .products svg circle {
+  stroke: beige;
+  stroke-dashoffset: -30;
+  stroke-dasharray: 170;
+}
+
+main .analyse .visits svg circle {
+  stroke: beige;
+  stroke-dashoffset: -30;
+  stroke-dasharray: 120;
+}
+
+.analyse .sales:hover {
+  background: linear-gradient(to left, #8fa991, #34736c);
+  transition: all 0.3s ease;
+  transform: translate(0px, -15px);
+  color: white;
+}
+
+.analyse .visits:hover {
+  background: linear-gradient(to left, #8fa991, #34736c);
+  transition: all 0.3s ease;
+  transform: translate(0px, -15px);
+  color: white;
+}
+
+.analyse .products:hover {
+  background: linear-gradient(to left, #8fa991, #34736c);
+  transition: all 0.3s ease;
+  transform: translate(0px, -15px);
+  color: white;
+}

@@ -54,9 +54,10 @@ const [profileImage, setProfileImage] = useState(
 
         // Close success dialog after 3 seconds
         setTimeout(() => {
-          setShowSuccessDialog(false);
-        }, 3000);
-        window.location.reload();
+            setShowSuccessDialog(false);
+            window.location.reload();
+        }, 2000);
+      
         
       }
     } catch (error) {
