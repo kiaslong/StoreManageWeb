@@ -3,6 +3,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import InsightsIcon from '@mui/icons-material/Insights';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '../assets/logo.png';
 import { AuthContext } from '../context/AuthContext';
@@ -26,6 +27,10 @@ const Sidebar = ({ handleSelectedComponent }) => {
         <a  onClick={() => handleSelectedComponent('Dashboard')}>
           <DashboardIcon />
           <h3>Dashboard</h3>
+        </a>
+        <a  onClick={() => handleSelectedComponent('Checkout')}>
+          <ShoppingCartIcon/>
+          <h3>Checkout</h3>
         </a>
         <a  onClick={() => handleSelectedComponent('Products')}>
           <StarRateIcon />

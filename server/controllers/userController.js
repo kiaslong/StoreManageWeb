@@ -6,24 +6,39 @@ const crypto = require('crypto');
 require('dotenv').config();
 const sendEmail = require('../services/sendMail')
 const generateLoginLink =require('../services/loginLink');
-
+const fs = require('fs/promises');
 
 const secretKey = process.env.SECRET_KEY;
 
 
 const updateUserProfile = async (req, res) => {
   try {
-   
-    const id  = req.params.id;
-
+    const id = req.params.id;
     const { name, email } = req.body;
+    let profileImagePath;
 
-  
-    const profileImagePath = req.file ? req.file.path : null;
+    // Check if a new file is uploaded in the request
+    if (req.file) {
+      profileImagePath = req.file.path;
 
-    
+      // Retrieve the existing profile photo URL from the database
+      const existingUser = await User.findById(id);
+      if (existingUser && existingUser.profilePhotoURL) {
+        // Delete the old file (if it exists)
+        await fs.unlink(existingUser.profilePhotoURL);
+      }
+    } else {
+      // If no new file is uploaded, retrieve the existing profile photo URL from the database
+      const existingUser = await User.findById(id);
+      if (!existingUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      profileImagePath = existingUser.profilePhotoURL;
+    }
+
     const user = await User.findByIdAndUpdate(
-      id, 
+      id,
       {
         $set: {
           fullname: name,
@@ -34,19 +49,16 @@ const updateUserProfile = async (req, res) => {
       { new: true } // Return the updated user
     );
 
-  
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    
     res.status(200).json({ user });
   } catch (error) {
     console.error('Error updating user profile:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
 
 const resendEmail = async (req, res) => {
   try {

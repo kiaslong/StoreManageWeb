@@ -1,4 +1,6 @@
 import React, { useState, useContext, useEffect} from 'react';
+import '../scss/HomePage.scss';
+import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import MainContent from '../components/MainContent';
 import RightSection from '../components/RightSection';
@@ -9,10 +11,9 @@ import CustomerManagement from '../components/CustomerManagement';
 import StaffManagement from '../components/StaffManagement';
 import ChangePassword from '../components/ChangePassword';
 import EditProfile from '../components/EditProfile';
-import '../scss/HomePage.scss';
+import Checkout from '../components/Checkout';
+import { EditIndexProvider } from '../context/EditContext';
 import { AuthContext } from '../context/AuthContext';
-import axios from 'axios';
-
 
 const Home = () => {
   const [componentToLoad, setComponentToLoad] = useState(<DashBoard/>);
@@ -43,6 +44,10 @@ const Home = () => {
     switch (component) {
       case 'Dashboard':
         setComponentToLoad(<DashBoard />);
+        setComponentContext(component)
+        break;
+      case 'Checkout':
+        setComponentToLoad(<Checkout/>);
         setComponentContext(component)
         break;
       case 'Products':
@@ -106,6 +111,7 @@ const Home = () => {
 
   
   return (
+    <EditIndexProvider>
     <div className="container">
   {currentUser.user.isLock ? (
     <div className="change-password-dialog">
@@ -143,12 +149,13 @@ const Home = () => {
         <>
           <Sidebar handleSelectedComponent={handleSelectedComponent} />
           <MainContent selectedComponent={componentToLoad} />
-          <RightSection selecedContext={componentContext} handleSelectedComponent={handleSelectedComponent} />
+          <RightSection selectedContext={componentContext} handleSelectedComponent={handleSelectedComponent} />
         </>
       )}
     </>
   )}
 </div>
+</EditIndexProvider>
   );
   
 

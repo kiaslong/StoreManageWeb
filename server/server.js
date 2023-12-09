@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const userRoute = require('./routes/userRoutes')
+const productRoutes = require('./routes/productRoutes');
 const cors = require('cors');
 const path = require('path');
 
@@ -15,9 +16,11 @@ const corsOptions = {
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
+
 app.use(cors(corsOptions));
 app.use('/users',userRoute)
+app.use('/products', productRoutes);
 
 const PORT = 8080;
 app.listen(PORT, () => {
