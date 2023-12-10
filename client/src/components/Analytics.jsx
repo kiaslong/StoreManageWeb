@@ -86,10 +86,10 @@ const Analytics = () => {
   };
 
   const barChartData = {
-    labels: ['Total Amount'],
+    labels: ['Total Profit'],
     datasets: [
       {
-        label: 'Total Amount',
+        label: 'Total Profit',
         data: [data.totalAmount],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
