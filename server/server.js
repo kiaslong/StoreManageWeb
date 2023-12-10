@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require('mongoose');
 const userRoute = require('./routes/userRoutes')
 const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const customerRoutes = require('./routes/customerRoutes')
 const cors = require('cors');
 const path = require('path');
 
@@ -21,6 +23,8 @@ app.use(express.json({ limit: '1mb' }));
 app.use(cors(corsOptions));
 app.use('/users',userRoute)
 app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
+app.use('/customers', customerRoutes);
 
 const PORT = 8080;
 app.listen(PORT, () => {

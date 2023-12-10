@@ -265,7 +265,7 @@ const RightSection = ({ selectedContext, handleSelectedComponent }) => {
                   })}
                 />
               </div>
-                <div className="product-image">
+                <div className="product-image-add">
                   <label htmlFor="productImage">Product Image:</label>
                   <input
                     type="file"

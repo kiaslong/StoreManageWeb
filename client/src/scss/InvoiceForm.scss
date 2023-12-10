@@ -1,0 +1,78 @@
+/* Add your styling for the InvoiceForm component here */
+
+.invoice-form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    margin-top: 10%;
+    margin-left: 30%; 
+    padding: 20px;
+    position: relative; 
+  }
+  
+  h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    color: #2c2b2b;
+    margin-bottom: 10px;
+  }
+  
+  .product-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    max-height: 300px; /* Set a maximum height for the product list */
+    overflow-y: auto; /* Enable vertical scrollbar if content exceeds the height */
+  }
+  
+  .product-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  
+  .product-image-invoice {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+  }
+  
+  .product-details {
+    flex-grow: 1;
+  }
+  
+  .product-details p {
+    margin: 0;
+    color: #333;
+  }
+  
+  .total-amount {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .creation-date {
+    margin-top: 10px;
+    color: #777;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #777;
+  }
+  

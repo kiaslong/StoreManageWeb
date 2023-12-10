@@ -1,67 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
+import InvoiceForm from './InvoiceForm';
+
+const ConfirmationDialog = ({ message, onConfirm, onCancel }) => (
+  <div className="modal-overlay">
+    <div className="modal">
+      <p>{message}</p>
+      <div className="modal-buttons-center">
+        <button onClick={onConfirm}>Yes</button>
+        <button onClick={onCancel}>No</button>
+      </div>
+    </div>
+  </div>
+);
+
+
+
 
 const Checkout = () => {
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [productToRemoveIndex, setProductToRemoveIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [quantityInput, setQuantityInput] = useState('');
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isExistingProduct, setIsExistingProduct] = useState(false);
+  const [existingProductIndex, setExistingProductIndex] = useState(null);
+  const [cashInput, setCashInput] = useState('');
+  const [invoiceData, setInvoiceData] = useState(null);
+  const [isInvoiceVisible, setIsInvoiceVisible] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [customerDatabase, setCustomerDatabase] = useState([]);
+
   const [checkoutData, setCheckoutData] = useState({
     phoneNum: '',
     fullName: '',
     address: '',
-    payStatus: '',
+    payMethod: '',
   });
+
+const openModal = () => {
+  setIsModalOpen(true);
+};
+
+const handleInvoiceClose = () => {
+  setIsInvoiceVisible(false);
+
+};
+const closeModal = () => {
+  setIsModalOpen(false);
+  setIsExistingProduct(false); 
+  setExistingProductIndex(null);
+};
+
+
+const fetchProducts = async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/products');
+    const fetchedProducts = response.data;
+
+    const searchOptions = fetchedProducts.map((product) => ({
+      value: product,
+      label: (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={`http://localhost:8080/${product.imageUrl}`}
+            style={{ marginRight: '8px', width: '30px', height: '30px' }}
+          />
+          <span>{`Product name: ${product.productName} - Price: ${product.retailPrice}`}</span>
+        </div>
+      ),
+    }));
+
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      search: searchOptions,
+    }));
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
+};
 
   const [options, setOptions] = useState({
     search: [],
     phoneNum: [],
-    payStatus: [
-      { value: 'Paid', label: 'Cash' },
-      { value: 'Pending', label: 'Card' },
+    payMethod: [
+      { value: 'Cash', label: 'Cash' },
+      { value: 'Card', label: 'Card' },
     ],
   });
 
-  const [customerDatabase, setCustomerDatabase] = useState([
-    { phoneNum: '1234567890', fullName: 'John Doe', address: '123 Main St' },
-    { phoneNum: '9876543210', fullName: 'Jane Smith', address: '456 Oak St' },
-  ]);
-
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCustomers = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/products');
-        const fetchedProducts = response.data;
-
-        const searchOptions = fetchedProducts.map((product) => ({
-          value: product,
-          label: (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-              src={`http://localhost:8080/${product.imageUrl}`}
-              style={{ marginRight: '8px', width: '30px', height: '30px' }}
-            />
-            <span>{`Product name: ${product.productName} - Price: ${product.retailPrice}`}</span>
-          </div>
-          ),
-        }));
-
-        setOptions((prevOptions) => ({
-          ...prevOptions,
-          search: searchOptions,
-        }));
+        const response = await axios.get('http://localhost:8080/customers');
+        const customers = response.data;
+        setCustomerDatabase(customers);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching customers:', error);
       }
     };
 
+    fetchCustomers();
+  }, [])
+
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
   useEffect(() => {
     const phoneNumOptions = customerDatabase.map((customer) => ({
       value: customer.phoneNum,
-      label: `${customer.fullName} - ${customer.address}`,
+      label: `${customer.phoneNum} - ${customer.fullName} - ${customer.address}`,
     }));
 
     setOptions((prevOptions) => ({
@@ -93,78 +146,101 @@ const Checkout = () => {
     }
   };
 
+
+  const handleQuantityChange = (index, action) => {
+    const updatedProducts = [...selectedProducts];
+    const currentQuantity = updatedProducts[index].quantity;
+
+    if (action === 'increment') {
+      updatedProducts[index].quantity = currentQuantity + 1;
+    } else if (action === 'decrement' && currentQuantity > 0) {
+      if (currentQuantity === 1) {
+        // Open the confirmation dialog
+        setIsConfirmationOpen(true);
+        // Store the index of the product to be removed
+        setProductToRemoveIndex(index);
+      } else {
+        updatedProducts[index].quantity = currentQuantity - 1;
+      }
+    }
+
+    setSelectedProducts(updatedProducts);
+  };
+
+  const handleConfirmation = (confirmed) => {
+    setIsConfirmationOpen(false);
+
+    if (confirmed) {
+      // Remove the product if confirmed
+      const updatedProducts = [...selectedProducts];
+      updatedProducts.splice(productToRemoveIndex, 1);
+      setSelectedProducts(updatedProducts);
+    }
+  };
+  
   const handleAddProduct = () => {
     if (checkoutData.product) {
       const existingProductIndex = selectedProducts.findIndex(
         (product) => product.value === checkoutData.product.value
       );
   
-      if (existingProductIndex !== -1) {
-        const maxQuantity = checkoutData.product.value.quantity;
-        let quantity = prompt(`Product already selected. Enter new quantity (max: ${maxQuantity}):`);
+      // Check if the quantity is greater than 0
+      if (checkoutData.product.value.quantity > 0) {
+        if (existingProductIndex !== -1) {
+          setIsExistingProduct(true);
+          setExistingProductIndex(existingProductIndex);
   
-        if (quantity === null) {
-          // User canceled the prompt
-          return;
-        }
+          // Set initial quantity to show in the modal
+          setQuantityInput(selectedProducts[existingProductIndex].quantity.toString());
   
-        if (!isNaN(quantity) && quantity > 0 && quantity <= maxQuantity) {
-          quantity = parseInt(quantity, 10);
-  
-          const updatedProducts = [...selectedProducts];
-          updatedProducts[existingProductIndex] = {
-            ...checkoutData.product,
-            quantity: quantity,
-          };
-  
-          setSelectedProducts(updatedProducts);
-          setCheckoutData((prevData) => ({
-            ...prevData,
-            product: null,
-          }));
+          openModal();
         } else {
-          alert(`Invalid quantity. Please enter a valid number between 1 and ${maxQuantity}.`);
+          setIsExistingProduct(false);
+  
+          setQuantityInput('');
+          openModal();
         }
-  
-        return;
-      }
-  
-      const maxQuantity = checkoutData.product.value.quantity;
-      let quantity = prompt(`Enter quantity (max: ${maxQuantity}):`);
-  
-      if (quantity === null) {
-        // User canceled the prompt
-        return;
-      }
-  
-      if (!isNaN(quantity) && quantity > 0 && quantity <= maxQuantity) {
-        quantity = parseInt(quantity, 10);
-  
-        const selectedProductWithQuantity = {
-          ...checkoutData.product,
-          quantity: quantity,
-        };
-  
-        setSelectedProducts((prevProducts) => [...prevProducts, selectedProductWithQuantity]);
-        setCheckoutData((prevData) => ({
-          ...prevData,
-          product: null,
-        }));
       } else {
-        alert(`Invalid quantity. Please enter a valid number between 1 and ${maxQuantity}.`);
+        // Show a notification that the quantity is 0 or less
+        alert('Out of Stock');
       }
     }
   };
   
+
+  const handleQuantityInput = () => {
+    const maxQuantity = checkoutData.product.value.quantity;
+    const quantityValue = parseInt(quantityInput, 10);
+    const existingProductIndex = selectedProducts.findIndex(
+      (product) => product.value === checkoutData.product.value
+    );
   
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    // Simulated logic to create a new customer account if it's the first time
-
-    // Add logic to handle form submission, e.g., send data to the server
-    console.log('Form submitted:', checkoutData);
+    
+    if (!isNaN(quantityValue) && quantityValue >= 0 && quantityValue <= maxQuantity) {
+      if (existingProductIndex !== -1) {
+        // Product already exists, update the quantity
+        const updatedProducts = [...selectedProducts];
+        updatedProducts[existingProductIndex].quantity = quantityValue;
+        setSelectedProducts(updatedProducts);
+      } else {
+        // Product does not exist, add a new one
+        const selectedProductWithQuantity = {
+          ...checkoutData.product,
+          quantity: quantityValue,
+        };
+        setSelectedProducts((prevProducts) => [...prevProducts, selectedProductWithQuantity]);
+      }
+    } else {
+      alert(`Invalid quantity. Please enter a valid number between 1 and ${maxQuantity}.`);
+    }
+  
+    setCheckoutData((prevData) => ({
+      ...prevData,
+      product: null,
+    }));
+    closeModal(); // Close the modal after successfully updating or adding the product
   };
+  
 
   const calculateTotalAmount = () => {
   
@@ -175,8 +251,101 @@ const Checkout = () => {
     );
   };
 
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (selectedProducts.length === 0) {
+      alert('Please add products before submitting the order.');
+      return;
+    }
+  
+    let cashBack = 0;
+    if (checkoutData.payMethod === 'Cash') {
+      const cashAmount = parseFloat(cashInput);
+  
+      if (cashAmount < calculateTotalAmount()) {
+        alert('Insufficient cash amount. Please enter a valid amount.');
+        return;
+      }
+  
+      cashBack = cashAmount - calculateTotalAmount();
+    }
+  
+    const randomYear = 2023 + Math.floor(Math.random() * 2);
+    const randomMonth = 11 + Math.floor(Math.random() * (12 - 11 + 1));
+    const randomDay = Math.floor(Math.random() * 28) + 1;
+  
+    const orderData = {
+      phoneNum: checkoutData.phoneNum,
+      fullName: checkoutData.fullName,
+      address: checkoutData.address,
+      payMethod: checkoutData.payMethod,
+      products: selectedProducts.map((product) => ({
+        label: product.label.toString(),
+        quantity: product.quantity,
+        value: product.value,
+      })),
+      
+      totalAmount: calculateTotalAmount(),
+      cashBack: cashBack.toFixed(1),
+      cashAmount: checkoutData.payMethod === 'Cash' ? parseFloat(cashInput).toFixed(1) : null,
+      date: `${randomYear}-${randomMonth.toString().padStart(2, '0')}-${randomDay
+        .toString()
+        .padStart(2, '0')}`,
+       totalQuantity: selectedProducts.reduce((total, product) => total + product.quantity, 0),  
+    };
+    try {
+      const response = await axios.post('http://localhost:8080/orders', orderData);
+
+      if (response.status === 201) {
+        
+        setInvoiceData(orderData);
+        setIsSuccessDialogOpen(true);
+        
+
+        setTimeout(() => {
+          setIsSuccessDialogOpen(false);
+        }, 2000);
+      
+        setTimeout(() => {
+          setIsInvoiceVisible(true);
+        }, 3000);
+        
+        // Clear the form fields
+        setCheckoutData({
+          phoneNum: '',
+          fullName: '',
+          address: '',
+          payMethod: '',
+        });
+        
+        setSelectedProducts([]);
+        setCashInput('');
+        setQuantityInput('');
+        await fetchProducts();
+      } else {
+        console.error('Error creating order. Unexpected status code:', response.status);
+
+        // Show the error dialog
+        setIsErrorDialogOpen(true);
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+
+      // Show the error dialog
+      setIsErrorDialogOpen(true);
+    }
+
+  };
+  
+  
   return (
     <main>
+       {isInvoiceVisible ? (
+       <InvoiceForm data={invoiceData} onClose={handleInvoiceClose} />
+      ) : (
+        <>
         <div className="breadcrumb-list">
       <span>{'Home ->'}</span>
       <ul className="breadcrumb">
@@ -185,6 +354,7 @@ const Checkout = () => {
         </li>
       </ul>
     </div>
+    
       <div className="search-sections">
     <div className="search-section">
       <h2>Product Search</h2>
@@ -205,7 +375,7 @@ const Checkout = () => {
 />
 
         </div>
-        <button onClick={handleAddProduct}>Add Product</button>
+        <button type="button" onClick={handleAddProduct}>Add Product</button>
       </div>
     </div>
 
@@ -282,47 +452,147 @@ const Checkout = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="payStatus">Payment Method:</label>
-            <Select
-              id="payStatus"
-              name="payStatus"
-              options={options.payStatus}
-              value={options.payStatus.find((opt) => opt.value === checkoutData.payStatus)}
-              onChange={(selectedOption) =>
-                setCheckoutData((prevData) => ({
-                  ...prevData,
-                  payStatus: selectedOption ? selectedOption.value : '',
-                }))
-              }
-              required
-            />
-          </div>
-
+  <label htmlFor="payMethod">Payment Method:</label>
+  <Select
+    id="payMethod"
+    name="payMethod"
+    options={options.payMethod}
+    value={options.payMethod.find((opt) => opt.value === checkoutData.payMethod)}
+    onChange={(selectedOption) =>
+      setCheckoutData((prevData) => ({
+        ...prevData,
+        payMethod: selectedOption ? selectedOption.value : '',
+      }))
+    }
+    required
+  />
+</div>
+          <h2>Selected Products</h2>
           <div className="selected-products">
-            <h2>Selected Products</h2>
-            <ul>
-              {selectedProducts.map((product) => (
-                <li key={product.value} style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ flex: '1' }}>
-                    {product.label}
-                  </span>
-                  <span>
-                    Quantity: {product.quantity}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+ 
+  <ul>
+    {selectedProducts.map((product, index) => (
+      <li key={product.value} style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ flex: '1' }}>
+          {product.label}
+        </span>
+        <span>
+          Quantity:
+          <button
+            type="button"
+            className="quantity-button"
+            onClick={() => handleQuantityChange(index, 'decrement')}
+          >
+            -
+          </button>
+          {product.quantity}
+          <button
+            type="button"
+            className="quantity-button"
+            onClick={() => handleQuantityChange(index, 'increment')}
+          >
+            +
+          </button>
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>
 
-          <div className="order-summary">
-            <h2>Order Summary</h2>
-            <p>Total Amount: ${calculateTotalAmount().toFixed(1)}</p>
-           
-          </div>
+<div className="order-summary">
+  <h2>Order Summary</h2>
+  <p>Total Amount: ${calculateTotalAmount().toFixed(1)}</p>
 
-          <button type="submit">Submit Order</button>
+  {/* Payment input based on the selected payment method */}
+  {checkoutData.payMethod === 'Cash' && (
+    <>
+      <div className="form-group">
+        <label htmlFor="cashInput">Cash Amount:</label>
+        <input
+          type="number"
+          id="cashInput"
+          name="cashInput"
+          value={cashInput}
+          onChange={(e) => setCashInput(e.target.value)}
+          required
+        />
+      </div>
+      <p>
+        Paid Amount: ${cashInput}{' '}
+        {cashInput < calculateTotalAmount() && (
+          <span style={{ color: 'red' }}> (Insufficient amount)</span>
+        )}
+      </p>
+      {cashInput > calculateTotalAmount() && (
+        <p>Cash Back: ${cashInput - calculateTotalAmount()}</p>
+      )}
+    </>
+  )}
+
+  {checkoutData.payMethod === 'Card' && (
+    <p>Paid Amount: ${calculateTotalAmount().toFixed(1)}</p>
+  )}
+</div>
+
+
+
+<button type="submit" onClick={handleFormSubmit} >
+  Submit Order
+</button>
+
+
         </form>
       </div>
+
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Enter Quantity</h2>
+            <p>Max Quantity: {checkoutData.product.value.quantity}</p>
+            <input
+              type="number"
+              value={quantityInput}
+              onChange={(e) => setQuantityInput(e.target.value)}
+              min="1"
+            />
+            <div className="modal-buttons">
+              <button type="button" onClick={handleQuantityInput}>Add</button>
+              <button type="button" onClick={closeModal}>Cancel</button>
+            </div>
+          </div>
+        </div>   
+      )}
+
+{isConfirmationOpen && (
+        <ConfirmationDialog
+          message="Are you sure you want to remove this product?"
+          onConfirm={() => handleConfirmation(true)}
+          onCancel={() => handleConfirmation(false)}
+        />
+      )}
+
+{isSuccessDialogOpen && (
+  <div className="modal-overlay">
+    <div className="modal success-dialog">
+      <p>Order created successfully!</p>
+      <button onClick={() => setIsSuccessDialogOpen(false)}>Close</button>
+    </div>
+  </div>
+)}
+
+{isErrorDialogOpen && (
+  <div className="modal-overlay">
+    <div className="modal error-dialog">
+      <p>Error creating order. Please try again later.</p>
+      <button onClick={() => setIsErrorDialogOpen(false)}>Close</button>
+    </div>
+  </div>
+)}
+
+      </>
+      )}
+
     </main>
   );
 };
