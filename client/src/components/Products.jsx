@@ -156,8 +156,8 @@ const Products = () => {
           </td>
           <td>{product.barcode}</td>
           <td>{product.productName}</td>
-          {currentUser?.user?.username === 'admin'&& <td>{product.importPrice}</td>}
-          <td>{product.retailPrice}</td>
+          {currentUser?.user?.username === 'admin'&& <td>${product.importPrice}</td>}
+          <td>${product.retailPrice}</td>
           <td>{product.quantity}</td>
           <td>{product.category}</td>
           <td>{new Date(product.creationDate).toLocaleDateString('en-GB')}</td>

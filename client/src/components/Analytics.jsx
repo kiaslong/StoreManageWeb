@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { AuthContext } from '../context/AuthContext';
 import Chart from 'chart.js/auto';
 import axios from 'axios';
 
 const Analytics = () => {
+  const { currentUser } = useContext(AuthContext);
   const [selectedTimeline, setSelectedTimeline] = useState('today');
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
   const [data, setData] = useState({ orders: [], totalAmount: 0, totalOrders: 0, totalProducts: 0 });
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedOrderIndex, setSelectedOrderIndex] = useState(null);
-  const [userRole, setUserRole] = useState('sales'); // or 'admin'
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +35,6 @@ const Analytics = () => {
         const result = response.data;
 
         setData(result);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching analytics data:', error);
       }
@@ -51,7 +52,7 @@ const Analytics = () => {
       <>
         {data.orders.slice(startIndex, endIndex).map((order, index) => (
           <div key={order._id} className="order-item" onClick={() => toggleOrderDetails(startIndex + index)}>
-            Customer: {order.fullName} - Phone Number: {order.phoneNum} - Total Amount: {order.totalAmount} - Total Quantity: {order.totalQuantity}
+            Customer: {order.fullName} - Phone Number: {order.phoneNum} - Total Amount: ${order.totalAmount} - Total Quantity: {order.totalQuantity}
             {selectedOrderIndex === startIndex + index && (
               <div className="order-details">
                 <h3>Order Details</h3>
@@ -60,7 +61,7 @@ const Analytics = () => {
                 <ul>
                   {order.products.map(product => (
                     <li key={product.barcode}>
-                      Barcode: {product.value.barcode} - Product Name: {product.value.productName} - Quantity: {product.quantity} - Price: {product.value.retailPrice}
+                      Barcode: {product.value.barcode} - Product Name: {product.value.productName} - Quantity: {product.quantity} - Price: ${product.value.retailPrice}
                     </li>
                   ))}
                 </ul>
@@ -152,15 +153,20 @@ const Analytics = () => {
               <input type="date" value={customEndDate} onChange={(e) => setCustomEndDate(e.target.value)} />
             </div>
           )}
+
           <div className="chart-container">
-            <div className="chart">
-              <Bar data={barChartData} />
-            </div>
+          {currentUser.user.username === 'admin' && (
+    <div className="chart">
+      {console.log('Rendering admin chart')}
+      <Bar data={barChartData} />
+    </div>
+  )}
             <div className="chart">
               <Bar data={barChartDataOrdersAndProducts} />
             </div>
           </div>
-          <p>Total Profit: {data.totalAmount}</p>
+
+          {currentUser.user.username === 'admin' ? ( <p>Total Profit: {data.totalAmount}</p>):null}
           <p>Number of Orders: {data.totalOrders}</p>
           <p>Number of Products: {data.totalProducts}</p>
           <div className="orders-container">

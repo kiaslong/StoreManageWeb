@@ -11,16 +11,18 @@ const path = require('path');
 mongoose.connect('mongodb+srv://kiraslong:longprobi1@datagrid.jgjusuw.mongodb.net/?retryWrites=true&w=majority', {
 
 });
+
 const corsOptions = {
-    origin: '*', // Allow requests from this origin
+    origin: '*', 
   };
+app.use(cors(corsOptions));
   
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use(express.json({ limit: '1mb' }));
 
-app.use(cors(corsOptions));
+
 app.use('/users',userRoute)
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
